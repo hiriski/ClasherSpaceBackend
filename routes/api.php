@@ -1,7 +1,11 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
+
+// controllers
+use App\Http\Controllers\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +18,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function () {
+    return Response::json([
+        'message'   => 'Welcome to ' . config('app.name'),
+        'status'    => 'OK'
+    ], JsonResponse::HTTP_OK);
+});
+
+/**
+ * -----------
+ * Auth routes
+ * -----------
+ */
+Route::prefix('/auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'registerWithEmailAndPassword']);
+    Route::post('/login-check-username', [AuthController::class, 'checkUsername']);
+    Route::post('/login', [AuthController::class, 'loginWithEmailAndPassword']);
+    Route::post('/send-reset-password-link', [AuthController::class, 'sendResetPasswordLink']);
+    Route::post('/password-reset/verify', [AuthController::class, 'verifyTokenPasswordReset']);
+    Route::post('/password-reset', [AuthController::class, 'resetPassword']);
+    Route::post('/revoke-token', [AuthController::class, 'revokeToken']);
 });
