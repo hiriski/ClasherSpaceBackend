@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const STATUS_ACTIVE      = 'active';
+    public const STATUS_SUSPEND     = 'suspend';
+    public const STATUS_INACTIVE    = 'inactive';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -19,8 +23,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
+        'email_verified_at',
         'password',
+        'photo_url',
+        'avatar_text_color',
+        'gender',
+        'about',
+        'date_of_birthday',
+        'status',
     ];
 
     /**
@@ -40,6 +52,39 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password'          => 'hashed',
     ];
+
+    /**
+     * Scope a query to only include material with status "active".
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    /**
+     * Scope a query to only include material with status "suspend".
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSuspend($query)
+    {
+        return $query->where('status', self::STATUS_SUSPEND);
+    }
+
+    /**
+     * Scope a query to only include material with status "inactive".
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
+    }
 }
