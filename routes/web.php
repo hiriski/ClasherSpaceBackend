@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return Response::json([
+        'message'   => 'Welcome to ' . config('app.name'),
+        'status'    => 'OK'
+    ], JsonResponse::HTTP_OK);
 });
