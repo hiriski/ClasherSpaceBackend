@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 
 // controllers
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\BaseLayout\BaseLayoutController;
+use App\Http\Controllers\BaseLayout\BaseLayoutTagController;
+use App\Http\Controllers\BaseLayout\BaseLayoutCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +41,16 @@ Route::prefix('/auth')->group(function () {
     Route::post('/password-reset/verify', [AuthController::class, 'verifyTokenPasswordReset']);
     Route::post('/password-reset', [AuthController::class, 'resetPassword']);
     Route::post('/revoke-token', [AuthController::class, 'revokeToken']);
+});
+
+
+/**
+ * -----------
+ * Base Layout
+ * -----------
+ */
+Route::prefix('/base-layout')->group(function () {
+    Route::apiResource('/category', BaseLayoutCategoryController::class);
+    Route::apiResource('/tag', BaseLayoutTagController::class);
+    Route::apiResource('/base', BaseLayoutController::class);
 });
