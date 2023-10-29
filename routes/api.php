@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BaseLayout\BaseLayoutController;
 use App\Http\Controllers\BaseLayout\BaseLayoutTagController;
 use App\Http\Controllers\BaseLayout\BaseLayoutCategoryController;
+use App\Http\Controllers\FeedbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,3 +56,10 @@ Route::prefix('/base-layout')->group(function () {
     Route::apiResource('/tag', BaseLayoutTagController::class);
     Route::apiResource('/base', BaseLayoutController::class);
 });
+
+/**
+ * -----------
+ * Feedback
+ * -----------
+ */
+Route::apiResource('/feedback', FeedbackController::class)->only(['store']);
