@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('email')->index();
             $table->string('token');
-            $table->string('app_id')->nullable();
-            $table->timestamp('created_at')->nullable();
+            $table->string('appId')->nullable();
+            $table->timestamp('createdAt')->nullable();
         });
     }
 

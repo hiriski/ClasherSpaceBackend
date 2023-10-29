@@ -22,7 +22,7 @@ class BaseLayout extends JsonResource
             'description'       => $this->description,
             'userId'            => $this->userId,
             'townHallLevel'     => $this->townHallLevel,
-            'builderHallLevel'  => $this->name,
+            'builderHallLevel'  => $this->builderHallLevel,
             'baseType'          => $this->baseType,
             'imageUrls'         => $this->imageUrls !== null ? explode(",", $this->imageUrls) : null,
             'views'             => $this->views,
@@ -31,8 +31,8 @@ class BaseLayout extends JsonResource
             'categories'        => new BaseLayoutCategoryCollection($this->whenLoaded('categories')),
             'tags'              => new BaseLayoutTagCollection($this->whenLoaded('tags')),
             'user'              => new User($this->whenLoaded('user')),
-            'createdAt'         => $this->createdAt,
-            'updatedAt'         => $this->updatedAt,
+            'createdAt'         => $this->createdAt ? $this->createdAt->toDateTimeString() : null,
+            'updatedAt'         => $this->updatedAt ? $this->updatedAt->toDateTimeString() : null,
         ];
     }
 }

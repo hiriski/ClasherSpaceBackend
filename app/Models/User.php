@@ -12,6 +12,9 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
+
     public const STATUS_ACTIVE      = 'active';
     public const STATUS_SUSPEND     = 'suspend';
     public const STATUS_INACTIVE    = 'inactive';
@@ -25,13 +28,13 @@ class User extends Authenticatable
         'name',
         'username',
         'email',
-        'email_verified_at',
+        'emailVerifiedAt',
         'password',
-        'photo_url',
-        'avatar_text_color',
+        'photoUrl',
+        'avatarTextColor',
         'gender',
         'about',
-        'date_of_birthday',
+        'dateOfBirthday',
         'status',
     ];
 
@@ -42,7 +45,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        'rememberToken',
     ];
 
     /**
@@ -51,12 +54,12 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'emailVerifiedAt' => 'datetime',
         'password'          => 'hashed',
     ];
 
     /**
-     * Scope a query to only include material with status "active".
+     * Scope a query to only include user with status "active".
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -67,7 +70,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Scope a query to only include material with status "suspend".
+     * Scope a query to only include user with status "suspend".
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -78,7 +81,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Scope a query to only include material with status "inactive".
+     * Scope a query to only include user with status "inactive".
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
