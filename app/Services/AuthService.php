@@ -22,7 +22,7 @@ class AuthService
     $newUser = $data;
     $newUser['password'] = Hash::make($data['password']);
 
-    $newUser['avatar_text_color'] = '#3391ff';
+    $newUser['avatarTextColor'] = '#3391ff';
 
     if (isset($data['username']) && $data['username']) {
       $newUser['username']  = $data['username'];
@@ -34,7 +34,7 @@ class AuthService
   }
 
   /**
-   * Check availability username when register in mobile app
+   * Check availability username
    */
   public function checkAvailabilityUsername($username)
   {
@@ -50,9 +50,8 @@ class AuthService
     }
   }
 
-
   /**
-   * Login
+   * login using email & password
    * 
    * @param @param App\Http\Request\LoginRequest $request;
    * @return \Illuminate\Http\Response
@@ -72,9 +71,9 @@ class AuthService
   public function sendResetPasswordLink(array $data)
   {
     $plainTextToken   = Str::random(36);
-    $appId            = isset($data['app_id']) ? $data['app_id'] : 'community-app-v1.0';
+    $appId            = isset($data['appId']) ? $data['appId'] : 'community-app-v1.0';
     $email            = $data['email'];
-    $resetLink        = config('app.app_frontend_url') . "/reset-password?app_id=$appId&token=$plainTextToken&email=$email";
+    $resetLink        = config('app.app_frontend_url') . "/reset-password?appId=$appId&token=$plainTextToken&email=$email";
 
     $passwordReset = ResetPasswordToken::where('email', $email)->first();
 
@@ -86,8 +85,8 @@ class AuthService
       $passwordReset = ResetPasswordToken::create([
         'email'       => $email,
         'token'       => Hash::make($plainTextToken),
-        'created_at'  => Carbon::now(),
-        'app_id'      => $appId,
+        'createdAt'   => Carbon::now(),
+        'appId'       => $appId,
       ]);
     }
 

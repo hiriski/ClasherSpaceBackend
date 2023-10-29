@@ -20,14 +20,14 @@ class User extends JsonResource
             'name'              => $this->name,
             'mobile_phone'      => $this->mobile_phone,
             'email'             => $this->email,
-            'photo_url'         => $this->photo_url !== null ? URL::to("/storage/images/") . $this->photo_url : null,
-            'avatar_text_color' => $this->avatar_text_color,
+            'photoUrl'          => $this->photoUrl,
+            'avatarTextColor'   => $this->avatarTextColor,
             'gender'            => $this->gender,
             'about'             => $this->about,
-            'date_of_birthday'  => $this->date_of_birthday,
+            'dateOfBirthday'    => $this->dateOfBirthday,
             'status'            => $this->status,
-            'created_at'        => $this->created_at ? $this->created_at->toDateTimeString() : null,
-            'updated_at'        => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
+            'createdAt'         => $this->createdAt ? $this->createdAt->toDateTimeString() : null,
+            'updatedAt'         => $this->updatedAt ? $this->updatedAt->toDateTimeString() : null,
         ];
     }
 }

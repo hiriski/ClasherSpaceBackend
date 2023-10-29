@@ -17,16 +17,17 @@ return new class extends Migration
             $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('emailVerifiedAt')->nullable();
             $table->string('password')->nullable();
-            $table->string('photo_url')->nullable();
-            $table->string('avatar_text_color', 36)->nullable();
+            $table->string('photoUrl')->nullable();
+            $table->string('avatarTextColor', 36)->nullable();
             $table->enum('gender', ['male', 'female', 'none'])->nullable();
             $table->text('about')->nullable();
-            $table->date('date_of_birthday')->nullable();
+            $table->date('dateOfBirthday')->nullable();
             $table->enum('status', [User::STATUS_ACTIVE, User::STATUS_SUSPEND, User::STATUS_INACTIVE])->default('active');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('rememberToken', 100)->nullable();
+            $table->timestamp('createdAt')->nullable();
+            $table->timestamp('updatedAt')->nullable();
         });
     }
 
