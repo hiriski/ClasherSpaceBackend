@@ -41,6 +41,7 @@ Route::prefix('/auth')->group(function () {
     Route::post('/password-reset/verify', [AuthController::class, 'verifyTokenPasswordReset']);
     Route::post('/password-reset', [AuthController::class, 'resetPassword']);
     Route::post('/revoke-token', [AuthController::class, 'revokeToken']);
+    Route::get('/user', [AuthController::class, 'getAuthenticatedUser']);
 });
 
 

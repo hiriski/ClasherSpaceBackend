@@ -18,7 +18,7 @@ class AuthController extends Controller
 
     public function __construct(AuthService $authService)
     {
-        $this->middleware(['auth:sanctum'])->only(['revokeToken']);
+        $this->middleware(['auth:sanctum'])->only(['revokeToken', 'getAuthenticatedUser']);
         $this->authService = $authService;
     }
 
