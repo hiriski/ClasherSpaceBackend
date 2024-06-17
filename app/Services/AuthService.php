@@ -2,132 +2,211 @@
 
 namespace App\Services;
 
+use App\Events\EventSendResetPasswordLink;
+use App\Http\Requests\Auth\GoogleSignInMobileRequest;
+use App\Libraries\AppLibrary;
+use Exception;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\ResetPasswordToken;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use \Laravel\Sanctum\PersonalAccessToken;
+use App\Http\Requests\Auth\LoginWithEmailAndPasswordRequest;
+use App\Http\Requests\Auth\RegisterWithEmailAndPasswordRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Models\AuthProvider;
 
 class AuthService
 {
 
   /**
-   * Register with email and password
+   * @throws Exception
    */
-  public function registerWithEmailAndPassword($data)
+  public function registerWithEmailAndPassword(RegisterWithEmailAndPasswordRequest $request)
   {
-    $newUser = $data;
-    $newUser['password'] = Hash::make($data['password']);
+    try {
+      $data = $request->validated();
+      $data['password'] = Hash::make($request->password);
+      $data['avatarTextColor'] = '#3391ff';
 
-    $newUser['avatarTextColor'] = '#3391ff';
-
-    if (isset($data['username']) && $data['username']) {
-      $newUser['username']  = $data['username'];
-    } else {
-      $newUser['username']  = Str::slug($data['name'], '_') . time();
+      if ($request->username) {
+        $data['username'] = $request->username;
+      } else {
+        $data['username'] = AppLibrary::generateUsername($request->name);
+      }
+      return User::create($data);
+    } catch (Exception $exception) {
+      Log::info($exception->getMessage());
+      throw new Exception($exception->getMessage(), 422);
     }
-
-    return User::create($newUser);
   }
 
   /**
-   * Check availability username
+   * @throws Exception
+   */
+  public function loginWithEmailAndPassword(LoginWithEmailAndPasswordRequest $request)
+  {
+    try {
+      if (Auth::attempt($request->validated())) {
+        return User::where('email', $request->email)->first();
+      } else {
+        throw new Exception(trans('auth.invalid_credentials'));
+      }
+    } catch (Exception $exception) {
+      Log::info($exception->getMessage());
+      throw new Exception($exception->getMessage(), 422);
+    }
+  }
+
+  /**
+   * @throws Exception 
+   */
+  public function googleSignInMobile(GoogleSignInMobileRequest $request)
+  {
+    try {
+      $user = User::where('email', $request->providerEmail)->first();
+      $authProvider  = AuthProvider::updateOrCreate(
+        [
+          'providerAccountId'   => $request->providerAccountId,
+          'providerName'        => $request->providerName,
+        ],
+        [
+          'providerAccountName' => $request->providerAccountName,
+          'providerPhotoUrl'    => $request->providerPhotoUrl,
+        ]
+      );
+      if (!$user) {
+        $userName = AppLibrary::generateUsername($request->providerAccountName);
+        $user = User::create([
+          'name'              => $request->providerAccountName,
+          'username'          => $userName,
+          'email'             => $request->providerEmail,
+          'avatarTextColor'   => '#3391ff',
+        ]);
+        $authProvider->fill(['userId' => $user->id])->save();
+      }
+      return $user->fresh();
+    } catch (Exception $exception) {
+      Log::info($exception->getMessage());
+      throw new Exception($exception->getMessage(), 422);
+    }
+  }
+
+
+  /**
+   * @throws Exception
    */
   public function checkAvailabilityUsername($username)
   {
-    $user = User::where('username', $username)->first();
-    if ($user) {
-      return [
-        'availability'     => false
-      ];
-    } else {
-      return [
-        'availability'     => true
-      ];
+    try {
+      $user = User::where('username', $username)->first();
+      if ($user) {
+        return [
+          'availability'     => false
+        ];
+      } else {
+        return [
+          'availability'     => true
+        ];
+      }
+    } catch (Exception $exception) {
+      Log::info($exception->getMessage());
+      throw new Exception($exception->getMessage(), 422);
     }
   }
 
   /**
-   * login using email & password
-   * 
-   * @param @param App\Http\Request\LoginRequest $request;
-   * @return \Illuminate\Http\Response
+   * @throws Exception
    */
-  public function loginWithEmailAndPassword($data)
+  public function sendResetPasswordLink(string $email, string $appId)
   {
-    if (Auth::attempt($data)) {
-      return User::where('email', $data['email'])->first();
+    try {
+      $userIsExists = User::where('email', $email)->exists();
+      if ($userIsExists) {
+        $plainTextToken   = Str::random(36);
+        $resetLink        = config('app.app_frontend_url') . "/reset-password?appId=$appId&token=$plainTextToken&email=$email";
+
+        $passwordReset = ResetPasswordToken::where('email', $email)->first();
+
+        if ($passwordReset) {
+          // Update existing password reset. 
+          $passwordReset->token = Hash::make($plainTextToken);
+          $passwordReset->save();
+        } else {
+          $passwordReset = ResetPasswordToken::create([
+            'email'       => $email,
+            'token'       => Hash::make($plainTextToken),
+            'createdAt'   => Carbon::now(),
+            'appId'       => $appId,
+          ]);
+        }
+
+        if ($passwordReset) {
+          // Send $resetLink to email
+          // Mail::to($email)->send(new \App\Mail\ResetPasswordInstruction([
+          //   'link'  => $resetLink,
+          //   'email' => $email,
+          // ]));
+          EventSendResetPasswordLink::dispatch(['email' => $email, 'link' => $resetLink]);
+          return trans('auth.reset_password_link_has_been_send');
+        } else {
+          throw new Exception(trans('auth.token_created_fail'));
+        }
+      } else {
+        throw new Exception(trans('auth.email_does_not_exist'));
+      }
+    } catch (Exception $exception) {
+      Log::info($exception->getMessage());
+      throw new Exception($exception->getMessage());
     }
-    return;
   }
 
 
   /**
-   * Send reset password link.
+   * @throws Exception
    */
-  public function sendResetPasswordLink(array $data)
+  public function verifyTokenPasswordReset(string $email, string $token)
   {
-    $plainTextToken   = Str::random(36);
-    $appId            = isset($data['appId']) ? $data['appId'] : 'community-app-v1.0';
-    $email            = $data['email'];
-    $resetLink        = config('app.app_frontend_url') . "/reset-password?appId=$appId&token=$plainTextToken&email=$email";
-
-    $passwordReset = ResetPasswordToken::where('email', $email)->first();
-
-    if ($passwordReset) {
-      // Update existing password reset.
-      $passwordReset->token = Hash::make($plainTextToken);
-      $passwordReset->save();
-    } else {
-      $passwordReset = ResetPasswordToken::create([
-        'email'       => $email,
-        'token'       => Hash::make($plainTextToken),
-        'createdAt'   => Carbon::now(),
-        'appId'       => $appId,
-      ]);
-    }
-
-    // Send $resetLink to email
-    Mail::to($email)->send(new \App\Mail\ResetPasswordInstruction([
-      'link'  => $resetLink,
-      'email' => $email,
-    ]));
-
-    return $passwordReset;
-  }
-
-
-  public function verifyTokenPasswordReset($data)
-  {
-    $user           = User::where('email', $data['email'])->first();
-    $passwordReset  = ResetPasswordToken::where('email', $data['email'])->first();
-    if ($user && Hash::check($data['token'], $passwordReset->token)) {
-      return $user;
-    } else {
-      return false;
+    try {
+      $user = User::where('email', $email)->first();
+      $passwordReset = ResetPasswordToken::where('email', $email)->first();
+      if ($user && Hash::check($token, $passwordReset->token)) {
+        return $user;
+      } else {
+        throw new Exception(trans('auth.invalid_token'));
+      }
+    } catch (Exception $exception) {
+      throw new Exception($exception->getMessage());
     }
   }
 
   /**
-   * Reset password
+   * @throws Exception
    */
-  public function resetPassword($data)
+  public function resetPassword(ResetPasswordRequest $request)
   {
-    $passwordReset = ResetPasswordToken::where('email', $data['email'])->first();
-    if ($passwordReset !== null && Hash::check($data['token'], $passwordReset->token)) {
-      $user = User::where('email', $data['email'])->first();
-      $user->password = Hash::make($data['password']);
-      $user->save();
+    try {
+      $passwordReset = ResetPasswordToken::where('email', $request->email)->first();
+      if ($passwordReset && Hash::check($request->token, $passwordReset->token)) {
 
-      // Then delete reset password row.
-      $passwordReset->delete();
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
 
-      return $user;
-    } else {
-      return;
+        // Then delete reset password row.
+        $passwordReset->delete();
+
+        return $user->fresh();
+      } else {
+        throw new Exception(trans('auth.reset_password_failed'));
+      }
+    } catch (Exception $exception) {
+      Log::info($exception->getMessage());
+      throw new Exception($exception->getMessage());
     }
   }
 

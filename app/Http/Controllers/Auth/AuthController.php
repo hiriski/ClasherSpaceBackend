@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisterRequest;
-use Illuminate\Support\Facades\Response;
+use App\Http\Requests\Auth\GoogleSignInMobileRequest;
+use App\Http\Requests\Auth\LoginWithEmailAndPasswordRequest;
+use App\Http\Requests\Auth\RegisterWithEmailAndPasswordRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Resources\User as UserResource;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -22,34 +26,65 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function registerWithEmailAndPassword(RegisterRequest $request)
-    {
-        $user = $this->authService->registerWithEmailAndPassword($request->only(['name', 'email', 'password']));
-        if ($user instanceof User) {
-            $token = $user->createToken($user->email)->plainTextToken;
+    /**
+     * Register with email & password
+     */
+    public function registerWithEmailAndPassword(
+        RegisterWithEmailAndPasswordRequest $request
+    ): \Illuminate\Http\Response | JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
+        try {
+            $user   = $this->authService->registerWithEmailAndPassword($request);
+            $token  = $user->createToken($user->email)->plainTextToken;
             return response()->json([
-                'token' => $token,
-                'user'  => new UserResource($user)
+                'token'   => $token,
+                'user'    => new UserResource($user)
             ], JsonResponse::HTTP_CREATED);
+        } catch (Exception $exception) {
+            return response([
+                'status' => false,
+                'message' => $exception->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
-    public function loginWithEmailAndPassword(Request $request)
-    {
-        $request->validate([
-            'email'     => ['required', 'string'],
-            'password'  => ['required', 'string'],
-        ]);
-        $user = $this->authService->loginWithEmailAndPassword($request->only(['email', 'password']));
-        if ($user instanceof User) {
-            $token = $user->createToken($user->email)->plainTextToken;
+    /**
+     * Login with email & password
+     */
+    public function loginWithEmailAndPassword(
+        LoginWithEmailAndPasswordRequest $request
+    ): \Illuminate\Http\Response | JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
+        try {
+            $user   = $this->authService->loginWithEmailAndPassword($request);
+            $token  = $user->createToken($user->email)->plainTextToken;
             return response()->json([
-                'token' => $token,
-                'user'  => new UserResource($user)
+                'token'   => $token,
+                'user'    => new UserResource($user)
             ], JsonResponse::HTTP_OK);
-        } else {
+        } catch (Exception $exception) {
+            return response([
+                'status' => false,
+                'message' => $exception->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Google sign in mobile
+     */
+    public function googleSignInMobile(
+        GoogleSignInMobileRequest $request
+    ): \Illuminate\Http\Response | JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
+        try {
+            $user   = $this->authService->googleSignInMobile($request);
+            $token  = $user->createToken($user->email)->plainTextToken;
             return response()->json([
-                'message'     => 'The provided credentials are incorrect.',
+                'token'   => $token,
+                'user'    => new UserResource($user)
+            ], JsonResponse::HTTP_OK);
+        } catch (Exception $exception) {
+            return response([
+                'status' => false,
+                'message' => $exception->getMessage()
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
@@ -57,13 +92,14 @@ class AuthController extends Controller
     /**
      * Get authenticated user
      */
-    public function getAuthenticatedUser()
+    public function getAuthenticatedUser(): \Illuminate\Http\Response | UserResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
-            $user = User::findOrFail(auth()->id());
+            $user   = User::findOrFail(auth()->id());
             return new UserResource($user);
-        } catch (\Exception $exception) {
-            return Response::json([
+        } catch (Exception $exception) {
+            return response([
+                'status' => false,
                 'message' => $exception->getMessage()
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
@@ -71,9 +107,6 @@ class AuthController extends Controller
 
     /**
      * Check username before login
-
-     * @param  App\Http\Requests\Auth\LoginCheckUsernameRequest $request;
-     * @return \Illuminate\Http\Response
      */
     public function checkUsername(Request $request)
     {
@@ -84,36 +117,43 @@ class AuthController extends Controller
         return new UserResource($user);
     }
 
-
-
     /**
      * Send reset password link.
      */
-    public function sendResetPasswordLink(Request $request)
+    public function sendResetPasswordLink(Request $request): \Illuminate\Http\Response | JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
-        $request->validate([
-            'email'     => ['required', 'email', 'exists:users,email'],
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'appId' => ['required', 'string']
         ]);
-        $result = $this->authService->sendResetPasswordLink($request->only(['email']));
-        if ($result) return response()->json([
-            'message'   => 'A Reset password link has been send to your email'
-        ], JsonResponse::HTTP_OK);
+        if ($validator->fails()) {
+            return new JsonResponse(
+                ['errors' => $validator->errors()],
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+        try {
+            $result = $this->authService->sendResetPasswordLink($request->email, $request->appId);
+            return response()->json(['status' => true, 'message' => $result], JsonResponse::HTTP_OK);
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
+        }
     }
 
-
-    public function verifyTokenPasswordReset(Request $request)
-    {
+    public function verifyTokenPasswordReset(
+        Request $request
+    ): \Illuminate\Http\Response | UserResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
         $request->validate([
             'token'     => ['required', 'string'],
             'email'     => ['required', 'email', 'exists:users,email']
         ]);
-        $result = $this->authService->verifyTokenPasswordReset($request->only(['email', 'token']));
-        if ($result) {
+        try {
+            $result = $this->authService->verifyTokenPasswordReset($request->email, $request->token);
             return new UserResource($result);
-        } else {
-            return response()->json([
-                'message'   => 'Invalid token or token doesn\'t exists',
-                'status'    => true,
+        } catch (Exception $exception) {
+            return response([
+                'status' => false,
+                'message' => $exception->getMessage()
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
@@ -121,26 +161,18 @@ class AuthController extends Controller
     /**
      * Reset password
      */
-    public function resetPassword(Request $request)
-    {
-        $request->validate([
-            'password'  => ['required', 'confirmed'],
-            'token'     => ['required', 'string'],
-            'email'     => ['required', 'email', 'exists:users,email'],
-        ]);
-        $user = $this->authService->resetPassword($request->only([
-            'password', 'token', 'email'
-        ]));
-        if ($user) {
-            $token = $user->createToken($user->email)->plainTextToken;
+    public function resetPassword(
+        ResetPasswordRequest $request
+    ): \Illuminate\Http\Response | JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
+        try {
+            $user   = $this->authService->resetPassword($request);
+            $token  = $user->createToken($user->email)->plainTextToken;
             return response()->json([
-                'token' => $token,
-                'user'  => new UserResource($user)
+                'token'   => $token,
+                'user'    => new UserResource($user)
             ], JsonResponse::HTTP_OK);
-        } else {
-            return response()->json([
-                'message'   => 'Opss, we can not reset your password. Maybe you already did ? Otherwise please try reset password again.'
-            ], JsonResponse::HTTP_BAD_REQUEST);
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 

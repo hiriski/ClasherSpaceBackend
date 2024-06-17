@@ -56,6 +56,15 @@ class User extends Authenticatable
         'password'          => 'hashed',
     ];
 
+
+
+    /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected $with = ['authProvider'];
+
     /**
      * Scope a query to only include user with status "active".
      *
@@ -76,5 +85,14 @@ class User extends Authenticatable
     public function scopeInactive($query)
     {
         return $query->where('status', Status::INACTIVE);
+    }
+
+    /**
+     * Relationship between User and AuthProvider
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function authProvider()
+    {
+        return $this->hasOne(AuthProvider::class, 'userId', 'id');
     }
 }
