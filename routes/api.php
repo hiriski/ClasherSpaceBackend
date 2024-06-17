@@ -43,6 +43,7 @@ Route::prefix('/auth')->group(function () {
     Route::post('/password-reset', [AuthController::class, 'resetPassword']);
     Route::post('/revoke-token', [AuthController::class, 'revokeToken']);
     Route::get('/user', [AuthController::class, 'getAuthenticatedUser']);
+    Route::post('/google/mobile', [AuthController::class, 'googleSignInMobile']);
 });
 
 

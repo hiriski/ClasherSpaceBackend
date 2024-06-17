@@ -25,8 +25,9 @@ class User extends JsonResource
             'about'             => $this->about,
             'dateOfBirthday'    => $this->dateOfBirthday,
             'status'            => $this->status,
-            'createdAt'         => $this->createdAt ? $this->createdAt->toDateTimeString() : null,
-            'updatedAt'         => $this->updatedAt ? $this->updatedAt->toDateTimeString() : null,
+            'createdAt'         => $this->createdAt,
+            'updatedAt'         => $this->updatedAt,
+            'authProvider'      => new AuthProvider($this->whenLoaded('authProvider')),
         ];
     }
 }

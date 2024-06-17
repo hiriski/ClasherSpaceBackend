@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female', 'none'])->nullable();
             $table->text('about')->nullable();
             $table->date('dateOfBirthday')->nullable();
-            $table->enum('status', [User::STATUS_ACTIVE, User::STATUS_SUSPEND, User::STATUS_INACTIVE])->default('active');
+            $table->unsignedTinyInteger('status')->default(Status::ACTIVE)->comment(Status::ACTIVE . '=' . 'Active' . ', ' . Status::INACTIVE . '=' . 'Inactive');
             $table->string('rememberToken', 100)->nullable();
             $table->timestamp('createdAt')->nullable();
             $table->timestamp('updatedAt')->nullable();

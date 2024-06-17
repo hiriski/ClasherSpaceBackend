@@ -11,9 +11,12 @@ class ResetPasswordToken extends Model
 
   protected $table = 'password_reset_tokens';
 
+  const CREATED_AT = 'createdAt';
+  const UPDATED_AT = 'updatedAt';
+
   public $timestamps = false;
 
-  protected $fillable = ['email', 'token'];
+  protected $fillable = ['email', 'token', 'appId'];
 
   /**
    * The attributes that should be hidden for serialization.
