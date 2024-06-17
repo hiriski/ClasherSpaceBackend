@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,10 +16,6 @@ class User extends Authenticatable
 
     const CREATED_AT = 'createdAt';
     const UPDATED_AT = 'updatedAt';
-
-    public const STATUS_ACTIVE      = 'active';
-    public const STATUS_SUSPEND     = 'suspend';
-    public const STATUS_INACTIVE    = 'inactive';
 
     /**
      * The attributes that are mass assignable.
@@ -66,18 +64,7 @@ class User extends Authenticatable
      */
     public function scopeActive($query)
     {
-        return $query->where('status', self::STATUS_ACTIVE);
-    }
-
-    /**
-     * Scope a query to only include user with status "suspend".
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeSuspend($query)
-    {
-        return $query->where('status', self::STATUS_SUSPEND);
+        return $query->where('status', Status::ACTIVE);
     }
 
     /**
@@ -88,6 +75,6 @@ class User extends Authenticatable
      */
     public function scopeInactive($query)
     {
-        return $query->where('status', self::STATUS_INACTIVE);
+        return $query->where('status', Status::INACTIVE);
     }
 }
