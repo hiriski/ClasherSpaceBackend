@@ -5,7 +5,9 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
-    'app_frontend_url' => env('APP_FRONT_END_URL', 'http://localhost:3000'),
+    'app_frontend_url'  => env('APP_FRONT_END_URL', 'http://localhost:3000'),
+    'coc_api_base_url'  => env('CLASH_OF_CLAN_BASE_API_URL', 'https://api.clashofclans.com/v1'),
+    'coc_api_key'       => env('CLASH_OF_CLAN_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------

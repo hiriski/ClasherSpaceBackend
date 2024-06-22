@@ -10,6 +10,7 @@ use App\Http\Controllers\BaseLayout\BaseLayoutController;
 use App\Http\Controllers\BaseLayout\BaseLayoutTagController;
 use App\Http\Controllers\BaseLayout\BaseLayoutCategoryController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\ClashOfClans\ClashOfClansPlayerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,3 +65,11 @@ Route::prefix('/base-layout')->group(function () {
  * -----------
  */
 Route::apiResource('/feedback', FeedbackController::class)->only(['store']);
+
+
+/**
+ * -----------
+ * Clash of Clans Player
+ * -----------
+ */
+Route::apiResource('/player', ClashOfClansPlayerController::class)->only(['index', 'show']);

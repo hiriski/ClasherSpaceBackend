@@ -95,4 +95,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(AuthProvider::class, 'userId', 'id');
     }
+
+    /**
+     * Relationship between User and ClashOfClansPlayer
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function player()
+    {
+        return $this->hasOne(ClashOfClansPlayer::class, 'userId', 'id');
+    }
 }
