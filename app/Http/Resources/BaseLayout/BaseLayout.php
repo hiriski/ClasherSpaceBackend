@@ -27,7 +27,7 @@ class BaseLayout extends JsonResource
             'imageUrls'         => $this->imageUrls !== null ? explode(",", $this->imageUrls) : null,
             'views'             => $this->views,
             'likedCount'        => $this->likedCount,
-            'markedAsWarBase'   => $this->markedAsWarBase,
+            'isWarBase'         => $this->isWarBase,
             'categories'        => new BaseLayoutCategoryCollection($this->whenLoaded('categories')),
             'tags'              => new BaseLayoutTagCollection($this->whenLoaded('tags')),
             'user'              => new User($this->whenLoaded('user')),

@@ -27,8 +27,19 @@ class BaseLayout extends BaseModel
         'imageUrls',
         'views',
         'likedCount',
-        'markedAsWarBase',
+        'isWarBase',
     ];
+
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'isWarBase'     => 'boolean',
+    ];
+
 
     /**
      * Scope a query to only include base with type "townhall".

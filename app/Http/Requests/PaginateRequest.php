@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\BaseLayout;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RequestParamsGetBaseLayout extends FormRequest
+class PaginateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,8 @@ class RequestParamsGetBaseLayout extends FormRequest
     public function rules(): array
     {
         return [
-            'baseType'              => ['required', 'string', 'in:townhall,builder'],
-            'query'                 => ['string', 'nullable'],
-            'townHallLevel'         => ['string', 'nullable'],
-            'builderHallLevel'      => ['string', 'nullable'],
-            'isWarBase'             => ['boolean', 'nullable']
+            'page'      => ['numeric', 'min:1', 'max:1000'],
+            'perPage'   => ['numeric', 'min:1', 'max:1000'],
         ];
     }
 }

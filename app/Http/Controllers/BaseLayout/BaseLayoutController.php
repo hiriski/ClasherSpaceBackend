@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\BaseLayout;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BaseLayout\RequestParamsGetBaseLayout;
+use App\Http\Resources\BaseLayout\BaseLayout as BaseLayoutResource;
 use App\Http\Requests\BaseLayout\StoreBaseLayoutRequest;
-use App\Http\Resources\BaseLayout\BaseLayout;
 use App\Http\Resources\BaseLayout\BaseLayoutCollection;
-use App\Services\BaseLayoutService;
+use App\Services\BaseLayout\BaseLayoutService;
+use App\Http\Requests\PaginateRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Exception;
 
 class BaseLayoutController extends Controller
 {
@@ -24,103 +25,61 @@ class BaseLayoutController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(RequestParamsGetBaseLayout $request)
+    public function index(PaginateRequest $request): \Illuminate\Http\Response | BaseLayoutCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
-        $items = $this->baseService->findAll($request->all());
-        return new BaseLayoutCollection($items);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBaseLayoutRequest $request)
-    {
-        $params = $request->only([
-            // base field model
-            'name',
-            'link',
-            'description',
-            'townHallLevel',
-            'builderHallLevel',
-            'baseType',
-            'imageUrls',
-            'markedAsWarBase',
-
-            // additional field
-            'categoryIds',
-            'tagIds',
-        ]);
         try {
-            $item = $this->baseService->create($params);
-            return response()->json(new BaseLayout($item), JsonResponse::HTTP_CREATED);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'message'   => $exception->getMessage(),
-            ]);
+            $baseLayouts = $this->baseService->list($request);
+            return new BaseLayoutCollection($baseLayouts);
+        } catch (Exception  $exception) {
+            return response()->json(['message' => $exception->getMessage()], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $id): \Illuminate\Http\Response | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
-            $item = $this->baseService->findById($id);
-            return new BaseLayout($item);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'message'   => $exception->getMessage(),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            return new BaseLayoutResource($this->baseService->findById($id));
+        } catch (Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreBaseLayoutRequest $request): \Illuminate\Http\Response | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    {
+        try {
+            return new BaseLayoutResource($this->baseService->store($request));
+        } catch (Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreBaseLayoutRequest $request, int $id): \Illuminate\Http\Response | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
-        $params = $request->only([
-            // base field model
-            'name',
-            'link',
-            'description',
-            'townHallLevel',
-            'builderHallLevel',
-            'baseType',
-            'imageUrls',
-            'markedAsWarBase',
-
-            // additional field
-            'categoryIds',
-            'tagIds',
-        ]);
         try {
-            $item = $this->baseService->update($params, $id);
-            return response()->json(new BaseLayout($item), JsonResponse::HTTP_OK);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'message'   => $exception->getMessage(),
-            ]);
+            return new BaseLayoutResource($this->baseService->update($request, $id));
+        } catch (Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(int $id): \Illuminate\Http\Response | \Illuminate\Http\JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
-            $result = $this->baseService->delete($id);
-            if ($result) {
-                return response()->json([
-                    'message'   => 'Item deleted.'
-                ]);
-            }
-        } catch (\Exception $exception) {
+            $this->baseService->destroy($id);
             return response()->json([
-                'message'   => $exception->getMessage(),
-            ]);
+                'message'   => 'Base layout deleted.'
+            ], JsonResponse::HTTP_ACCEPTED);
+        } catch (Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 }

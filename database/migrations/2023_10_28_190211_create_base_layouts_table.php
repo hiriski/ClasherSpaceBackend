@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('imageUrls')->nullable();
             $table->unsignedBigInteger('views')->default(0);
             $table->unsignedBigInteger('likedCount')->default(0);
-            $table->boolean('markedAsWarBase')->default(false);
+            $table->boolean('isWarBase')->default(false);
             $table->timestamp('createdAt')->nullable();
             $table->timestamp('updatedAt')->nullable();
         });
