@@ -25,7 +25,7 @@ class BaseLayoutController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(PaginateRequest $request): \Illuminate\Http\Response | BaseLayoutCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    public function index(PaginateRequest $request): \Illuminate\Http\JsonResponse | BaseLayoutCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
             $baseLayouts = $this->baseService->list($request);
@@ -38,7 +38,7 @@ class BaseLayoutController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id): \Illuminate\Http\Response | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    public function show(int $id): \Illuminate\Http\JsonResponse | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
             return new BaseLayoutResource($this->baseService->findById($id));
@@ -50,7 +50,7 @@ class BaseLayoutController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBaseLayoutRequest $request): \Illuminate\Http\Response | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    public function store(StoreBaseLayoutRequest $request): \Illuminate\Http\JsonResponse | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
             return new BaseLayoutResource($this->baseService->store($request));
@@ -62,7 +62,7 @@ class BaseLayoutController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreBaseLayoutRequest $request, int $id): \Illuminate\Http\Response | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    public function update(StoreBaseLayoutRequest $request, int $id): \Illuminate\Http\JsonResponse | BaseLayoutResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
             return new BaseLayoutResource($this->baseService->update($request, $id));
@@ -71,7 +71,7 @@ class BaseLayoutController extends Controller
         }
     }
 
-    public function destroy(int $id): \Illuminate\Http\Response | \Illuminate\Http\JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    public function destroy(int $id): \Illuminate\Http\JsonResponse | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
             $this->baseService->destroy($id);
