@@ -28,7 +28,7 @@ class StoreBaseLayoutRequest extends FormRequest
             'townHallLevel'         => ['integer', 'nullable'],
             'builderHallLevel'      => ['integer', 'nullable'],
             'baseType'              => ['required', 'string', 'in:townhall,builder'],
-            'markedAsWarBase'       => ['boolean', 'nullable'],
+            'isWarBase'       => ['boolean', 'nullable'],
             'imageUrls'             => ['array', 'nullable'],
             'imageUrls.*'           => ['required', 'string'],
 

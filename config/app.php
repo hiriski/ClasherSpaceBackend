@@ -2,6 +2,9 @@
 
 return [
 
+    'coc_api_base_url'  => env('CLASH_OF_CLAN_BASE_API_URL', 'https://api.clashofclans.com/v1'),
+    'coc_api_key'       => env('CLASH_OF_CLAN_API_KEY', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
