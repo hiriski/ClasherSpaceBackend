@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class ClashOfClansApiService
 {
-  public function get(string $path, array $queryParams = null)
+  public function get(string $path, array | null $queryParams = null)
   {
     try {
       $http = Http::withHeaders([

@@ -5,6 +5,7 @@ namespace App\Services\ClashOfClans;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Models\ClashOfClansPlayer;
+use Carbon\Carbon;
 
 class ClashOfClansPlayerService extends ClashOfClansApiService
 {
@@ -35,10 +36,11 @@ class ClashOfClansPlayerService extends ClashOfClansApiService
           'playerTag' => $playerTag,
         ],
         [
-          'data' => json_encode($player),
+          'data'      => json_encode($player),
+          'syncedAt'  => Carbon::now(),
         ]
       );
-      return $player;
+      return $player->fresh();
     } catch (Exception $exception) {
       Log::info($exception->getMessage());
       throw new Exception($exception->getMessage());

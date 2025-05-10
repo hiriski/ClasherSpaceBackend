@@ -18,5 +18,6 @@ class ClashOfClansPlayer extends BaseModel
         'userId',
         'playerTag',
         'data',
+        'syncedAt'
     ];
 }

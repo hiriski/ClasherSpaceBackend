@@ -8,7 +8,6 @@ use App\Http\Resources\ClashOfClans\ClashOfClansPlayer;
 use App\Http\Resources\ClashOfClans\ClashOfClansPlayerCollection;
 use App\Services\ClashOfClans\ClashOfClansPlayerService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Exception;
 
 class ClashOfClansPlayerController extends Controller
