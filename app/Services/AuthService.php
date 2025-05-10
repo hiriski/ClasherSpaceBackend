@@ -128,7 +128,7 @@ class AuthService
       $userIsExists = User::where('email', $email)->exists();
       if ($userIsExists) {
         $plainTextToken   = Str::random(36);
-        $resetLink        = config('app.app_frontend_url') . "/reset-password?appId=$appId&token=$plainTextToken&email=$email";
+        $resetLink        = env('APP_FRONTEND_URL') . "/reset-password?appId=$appId&token=$plainTextToken&email=$email";
 
         $passwordReset = ResetPasswordToken::where('email', $email)->first();
 
