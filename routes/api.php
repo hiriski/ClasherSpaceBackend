@@ -81,4 +81,5 @@ Route::apiResource('/player', ClashOfClansPlayerController::class)->only(['index
  * Clash of Clans (Clan)
  * -----------
  */
+Route::get('/clan/search', [ClashOfClansClanController::class, 'search']);
 Route::apiResource('/clan', ClashOfClansClanController::class)->only(['index', 'show']);

@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Models\ClashOfClansPlayer;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
 
 class ClashOfClansPlayerService extends ClashOfClansApiService
 {
@@ -13,7 +14,7 @@ class ClashOfClansPlayerService extends ClashOfClansApiService
   /**
    * @throws Exception 
    */
-  public function findAll()
+  public function findAll(Request $request)
   {
     try {
       $perPage = 20;
