@@ -22,7 +22,16 @@ class SearchClanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['required', 'string']
+            'name'              => ['required', 'string'],
+            'locationId'        => ['nullable', 'integer'],
+            'minMembers'        => ['nullable', 'integer'],
+            'maxMembers'        => ['nullable', 'integer'],
+            'minClanPoints'     => ['nullable', 'integer'],
+            'minClanLevel'      => ['nullable', 'integer'],
+            'limit'             => ['nullable', 'integer'],
+            'after'             => ['nullable', 'integer'],
+            'before'            => ['nullable', 'integer'],
+            'labelIds'          => ['nullable', 'string']
         ];
     }
 }
