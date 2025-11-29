@@ -1,61 +1,371 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Clash of Clans Base Layouts - Admin Panel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform komunitas Clash of Clans untuk berbagi dan mengelola base layout dengan sistem admin panel yang komprehensif menggunakan Laravel, Inertia.js, React, dan TypeScript.
 
-## About Laravel
+## 🚀 Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Admin Panel
+- **Dashboard Statistik Global**: Overview total users, base layouts, views, dan likes
+- **User Management**: Kelola semua user (view, detail, delete)
+- **Base Layout Management**: Kelola semua base layout dari semua user
+- **Category & Tag Management**: Kelola kategori dan tag untuk base layouts
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### General User Panel
+- **Personal Dashboard**: Statistik pribadi (total layouts, views, likes)
+- **Base Layout CRUD**: Create, Read, Update, Delete base layout milik sendiri
+- **Browse & Share**: Lihat dan share base layouts ke komunitas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Authentication & Authorization
+- **Role-based Access Control**: Admin dan General User dengan permissions berbeda
+- **Laravel Policies**: Authorization untuk setiap aksi
+- **Email Verification**: Verifikasi email untuk General User
+- **Secure Authentication**: Laravel Breeze dengan Inertia.js
 
-## Learning Laravel
+## 🧱 Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Backend
+- **Framework**: Laravel 12
+- **Authentication**: Laravel Breeze + Sanctum
+- **Database**: MySQL/PostgreSQL
+- **API**: RESTful API untuk mobile app (terpisah)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Frontend (Admin Panel)
+- **Framework**: React 18 with TypeScript
+- **UI Framework**: Inertia.js (SSR)
+- **Component Library**: Shadcn UI + Tailwind CSS 4
+- **Form Handling**: React Hook Form + Zod Validation
+- **Icons**: Lucide React
+- **State Management**: Inertia.js (server-driven)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Development Tools
+- **Build Tool**: Vite
+- **Type Checking**: TypeScript
+- **Code Quality**: Laravel Pint (PHP), ESLint (TypeScript)
 
-## Laravel Sponsors
+## 📋 Requirements
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP >= 8.2
+- Composer
+- Node.js >= 18.x
+- NPM or Yarn
+- MySQL >= 8.0 atau PostgreSQL >= 13
 
-### Premium Partners
+## 🔧 Installation
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+### 1. Clone Repository
 
-## Contributing
+```bash
+git clone <repository-url>
+cd csb
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 2. Install Dependencies
 
-## Code of Conduct
+```bash
+# Install PHP dependencies
+composer install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Install Node dependencies
+npm install
+```
 
-## Security Vulnerabilities
+### 3. Environment Setup
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Copy environment file
+cp .env.example .env
 
-## License
+# Generate application key
+php artisan key:generate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 4. Database Configuration
+
+Edit file `.env` dan sesuaikan dengan konfigurasi database Anda:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=csb_database
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Run Migrations & Seeders
+
+```bash
+# Run migrations and seed database with sample data
+php artisan migrate:fresh --seed
+```
+
+Seeder akan membuat:
+- 1 Admin User
+- 3 General Users
+- Sample Categories & Tags
+- Sample Base Layouts
+
+### 6. Build Frontend Assets
+
+```bash
+# Development build with watch
+npm run dev
+
+# Production build
+npm run build
+```
+
+### 7. Start Development Server
+
+```bash
+# Start Laravel development server
+php artisan serve
+
+# In another terminal, start Vite dev server
+npm run dev
+```
+
+Aplikasi akan berjalan di `http://localhost:8000`
+
+## 👤 Default Accounts
+
+### Admin Account
+- **Email**: admin@cocbases.com
+- **Password**: password
+
+### General User Accounts
+- **Email**: john@example.com | **Password**: password
+- **Email**: jane@example.com | **Password**: password
+- **Email**: mike@example.com | **Password**: password
+
+## 📁 Project Structure
+
+```
+csb/
+├── app/
+│   ├── Enums/              # Enumerations (Role, Status)
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Web/        # Inertia Controllers
+│   │   │   │   ├── Admin/  # Admin Controllers
+│   │   │   │   └── ...     # User Controllers
+│   │   │   └── ...         # API Controllers
+│   │   ├── Middleware/     # Custom Middleware (EnsureUserHasRole)
+│   │   └── Requests/       # Form Requests
+│   ├── Models/             # Eloquent Models
+│   ├── Policies/           # Authorization Policies
+│   └── Services/           # Business Logic Services
+├── database/
+│   ├── migrations/         # Database Migrations
+│   └── seeders/            # Database Seeders
+├── resources/
+│   ├── js/
+│   │   ├── components/
+│   │   │   └── ui/         # Shadcn UI Components
+│   │   ├── Layouts/        # Page Layouts (AppLayout, AuthLayout)
+│   │   ├── Pages/          # Inertia Pages
+│   │   │   ├── Admin/      # Admin Pages
+│   │   │   ├── User/       # General User Pages
+│   │   │   ├── Auth/       # Authentication Pages
+│   │   │   └── ...
+│   │   ├── types/          # TypeScript Type Definitions
+│   │   └── lib/            # Utility Functions
+│   └── views/              # Blade Templates (minimal, for Inertia root)
+└── routes/
+    ├── web.php             # Web Routes (Inertia)
+    └── api.php             # API Routes (untuk mobile app)
+```
+
+## 🔐 Authorization System
+
+### Roles
+- **admin**: Full access ke semua fitur
+- **general_user**: Akses terbatas ke fitur user
+
+### Permissions
+Menggunakan Laravel Policy:
+
+#### BaseLayoutPolicy
+- `viewAny`: Semua user bisa melihat list
+- `view`: Semua user bisa melihat detail
+- `create`: Admin dan General User
+- `update`: Admin (semua) atau owner (milik sendiri)
+- `delete`: Admin (semua) atau owner (milik sendiri)
+
+#### UserPolicy
+- `viewAny`: Hanya Admin
+- `view`: Admin atau user itu sendiri
+- `create`: Hanya Admin
+- `update`: Admin atau user itu sendiri
+- `delete`: Hanya Admin (tidak bisa delete diri sendiri)
+
+## 🚦 Routes Overview
+
+### Admin Routes (`/admin/*`)
+```
+GET    /admin/dashboard              # Admin Dashboard
+GET    /admin/users                  # Users List
+GET    /admin/users/{id}             # User Detail
+DELETE /admin/users/{id}             # Delete User
+GET    /admin/base-layouts           # Base Layouts List
+GET    /admin/base-layouts/{id}      # Base Layout Detail
+DELETE /admin/base-layouts/{id}      # Delete Base Layout
+GET    /admin/categories             # Categories List
+GET    /admin/tags                   # Tags List
+```
+
+### General User Routes
+```
+GET  /dashboard                      # User Dashboard
+GET  /base-layouts                   # My Base Layouts
+GET  /base-layouts/create            # Create Base Layout Form
+GET  /base-layouts/{id}              # Base Layout Detail
+POST /base-layouts                   # Store Base Layout (implement as needed)
+PUT  /base-layouts/{id}              # Update Base Layout (implement as needed)
+DELETE /base-layouts/{id}            # Delete Base Layout (implement as needed)
+```
+
+### Auth Routes
+```
+GET  /login                          # Login Page
+POST /login                          # Login Action
+POST /logout                         # Logout
+GET  /register                       # Register Page
+POST /register                       # Register Action
+GET  /forgot-password                # Forgot Password
+POST /forgot-password                # Send Reset Link
+GET  /reset-password/{token}         # Reset Password Page
+POST /reset-password                 # Reset Password Action
+GET  /verify-email                   # Email Verification Notice
+GET  /verify-email/{id}/{hash}       # Verify Email
+POST /email/verification-notification # Resend Verification
+```
+
+## 📝 API Routes (untuk Mobile App)
+
+API tersedia di `/api/v1/*` untuk integrasi dengan mobile app. Dokumentasi API terpisah.
+
+## 🎨 Frontend Components
+
+### Shadcn UI Components
+- Button
+- Card
+- Badge
+- Table
+- Form Components (Input, Label, etc.)
+- Dialog/Modal
+- Dropdown Menu
+- Toast Notifications (dapat ditambahkan)
+
+### Custom Components
+- AppLayout: Main layout dengan sidebar navigation
+- AuthLayout: Layout untuk halaman authentication (dari Breeze)
+
+## 🔄 Development Workflow
+
+### Running in Development
+
+```bash
+# Terminal 1: Laravel server
+php artisan serve
+
+# Terminal 2: Vite dev server (hot reload)
+npm run dev
+
+# Terminal 3: Queue worker (optional)
+php artisan queue:work
+
+# Terminal 4: Log monitoring (optional)
+php artisan pail
+```
+
+### Building for Production
+
+```bash
+# Build optimized assets
+npm run build
+
+# Optimize Laravel
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+## 🧪 Testing
+
+```bash
+# Run PHP tests
+php artisan test
+
+# Run with coverage
+php artisan test --coverage
+```
+
+## 📦 Next Steps / Future Enhancements
+
+### Immediate (Implement as needed)
+- [ ] Complete CRUD operations for Base Layouts (general user)
+- [ ] Implement file upload for base layout screenshots
+- [ ] Add image optimization and storage
+- [ ] Implement Categories and Tags CRUD
+- [ ] Add search and filtering functionality
+- [ ] Implement sorting and advanced filtering
+
+### Short-term
+- [ ] Add toast notifications untuk feedback
+- [ ] Implement bulk actions (delete multiple)
+- [ ] Add export functionality (CSV, PDF)
+- [ ] Implement base layout rating system
+- [ ] Add comments system untuk base layouts
+
+### Long-term
+- [ ] Create public Next.js app untuk SEO-friendly browsing
+- [ ] Mobile app integration (React Native/Flutter)
+- [ ] Advanced analytics dashboard
+- [ ] Real-time notifications
+- [ ] Social features (follow users, save favorites)
+- [ ] Integration dengan Clash of Clans API
+
+## 🐛 Troubleshooting
+
+### Build Errors
+```bash
+# Clear all caches
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Rebuild frontend
+rm -rf node_modules
+npm install
+npm run build
+```
+
+### Database Issues
+```bash
+# Reset database
+php artisan migrate:fresh --seed
+```
+
+### Permission Issues (Linux/Mac)
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📧 Support
+
+For support, email support@cocbases.com or join our Discord community.
+
+---
+
+**Built with ❤️ using Laravel, Inertia.js, React, and TypeScript**
