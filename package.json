@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "tsc && vite build",
-        "dev": "vite"
+        "dev": "vite",  
+        "laravel:serve": "php artisan serve --host 0.0.0.0"
     },
     "devDependencies": {
         "@headlessui/react": "^2.0.0",

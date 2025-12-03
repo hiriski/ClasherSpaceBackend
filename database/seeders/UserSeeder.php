@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Admin User',
             'username' => 'admin',
-            'email' => 'admin@cocbases.com',
+            'email' => 'admin@clashers.space',
             'password' => Hash::make('password'),
             'role' => Role::ADMIN,
             'status' => Status::ACTIVE,
